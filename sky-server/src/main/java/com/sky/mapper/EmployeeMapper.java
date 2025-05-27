@@ -36,4 +36,6 @@ public interface EmployeeMapper {
      * @return
      */
     void update(Employee employee);
+
+    Employee getById(Long id);
 }

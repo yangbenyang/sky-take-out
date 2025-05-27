@@ -28,4 +28,8 @@ public interface EmployeeService {
      * 员工启用禁用
      */
     void startOrStop(Integer status, Long id);
+
+    void update(Employee employee);
+
+    Employee getById(Long id);
 }
