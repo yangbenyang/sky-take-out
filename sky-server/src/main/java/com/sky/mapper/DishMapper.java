@@ -42,4 +42,25 @@ public interface DishMapper {
      */
     Integer countByPage(DishPageQueryDTO dishPageQueryDTO);
 
+    /**
+     * 根据id批量删除菜品
+     * @param ids
+     */
+    void deleteByIds(List<Long> ids);
+
+    /**
+     * 根据id查询菜品
+     * @param id
+     * @return
+     */
+    @Select("select * from dish where id = #{id}")
+    Dish getById(Long id);
+
+    /**
+     * 根据id修改菜品基本信息
+     * @param dish
+     */
+    @AutoFill(OperationType.UPDATE)
+    void update(Dish dish);
+
 }

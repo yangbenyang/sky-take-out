@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Arrays;
 
 @Service
 @Slf4j
@@ -66,6 +67,11 @@ public class DishServiceImpl implements DishService {
         }
     }
 
+    /**
+     * 菜品分页查询
+     * @param dishPageQueryDTO
+     * @return
+     */
     public PageResult pageQuery(DishPageQueryDTO dishPageQueryDTO) {
         // 1. 分页查询菜品
         PageHelper.startPage(dishPageQueryDTO.getPage(), dishPageQueryDTO.getPageSize());
@@ -76,5 +82,90 @@ public class DishServiceImpl implements DishService {
         
         // 3. 封装PageResult对象
         return new PageResult(total, dishes);
+    }
+
+    /**
+     * 批量删除菜品
+     * @param ids
+     */
+    @Transactional
+    public void deleteBatch(List<Long> ids) {
+        // 1. 判断当前菜品是否能够删除---是否存在起售中的菜品
+        for (Long id : ids) {
+            Dish dish = dishMapper.getById(id);
+            if (dish == null) {
+                throw new RuntimeException("菜品不存在");
+            }
+            if (dish.getStatus() == 1) {
+                // 当前菜品处于起售中，不能删除
+                throw new RuntimeException("菜品" + dish.getName() + "正在售卖中，不能删除");
+            }
+        }
+
+        // 2. 删除菜品表中的菜品数据
+        dishMapper.deleteByIds(ids);
+
+        // 3. 删除菜品关联的口味数据
+        dishFlavorMapper.deleteByDishIds(ids);
+    }
+
+    /**
+     * 根据id查询菜品和对应的口味数据
+     * @param id
+     * @return
+     */
+    public DishDTO getByIdWithFlavor(Long id) {
+        // 1. 查询菜品基本信息
+        Dish dish = dishMapper.getById(id);
+        if (dish == null) {
+            throw new RuntimeException("菜品不存在");
+        }
+
+        // 2. 查询菜品口味数据
+        List<DishFlavor> flavors = dishFlavorMapper.getByDishId(id);
+
+        // 3. 封装DishDTO对象
+        DishDTO dishDTO = new DishDTO();
+        dishDTO.setId(dish.getId());
+        dishDTO.setName(dish.getName());
+        dishDTO.setCategoryId(dish.getCategoryId());
+        dishDTO.setPrice(dish.getPrice());
+        dishDTO.setImage(dish.getImage());
+        dishDTO.setDescription(dish.getDescription());
+        dishDTO.setStatus(dish.getStatus());
+        dishDTO.setFlavors(flavors);
+
+        return dishDTO;
+    }
+
+    /**
+     * 修改菜品和对应的口味数据
+     * @param dishDTO
+     */
+    @Transactional
+    public void updateWithFlavor(DishDTO dishDTO) {
+        // 1. 修改菜品基本信息
+        Dish dish = Dish.builder()
+                .id(dishDTO.getId())
+                .name(dishDTO.getName())
+                .categoryId(dishDTO.getCategoryId())
+                .price(dishDTO.getPrice())
+                .image(dishDTO.getImage())
+                .description(dishDTO.getDescription())
+                .status(dishDTO.getStatus())
+                .build();
+        dishMapper.update(dish);
+
+        // 2. 删除原有的口味数据
+        dishFlavorMapper.deleteByDishIds(Arrays.asList(dishDTO.getId()));
+
+        // 3. 重新插入口味数据
+        List<DishFlavor> flavors = dishDTO.getFlavors();
+        if (flavors != null && !flavors.isEmpty()) {
+            for (DishFlavor flavor : flavors) {
+                flavor.setDishId(dishDTO.getId());
+            }
+            dishFlavorMapper.insertBatch(flavors);
+        }
     }
 } 
