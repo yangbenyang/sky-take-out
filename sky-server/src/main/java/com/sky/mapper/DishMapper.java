@@ -1,7 +1,11 @@
 package com.sky.mapper;
 
 import com.sky.annotation.AutoFill;
+import com.sky.dto.DishPageQueryDTO;
 import com.sky.entity.Dish;
+
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import com.sky.enumeration.OperationType;
@@ -23,5 +27,19 @@ public interface DishMapper {
      */
     @AutoFill(OperationType.INSERT)
     void insert(Dish dish);
+
+    /**
+     * 菜品分页查询
+     * @param dishPageQueryDTO
+     * @return
+     */
+    List<Dish> pageQuery(DishPageQueryDTO dishPageQueryDTO);
+
+    /**
+     * 根据条件统计菜品数量
+     * @param dishPageQueryDTO
+     * @return
+     */
+    Integer countByPage(DishPageQueryDTO dishPageQueryDTO);
 
 }
