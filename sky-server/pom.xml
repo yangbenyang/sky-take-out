@@ -121,6 +121,12 @@
             <artifactId>spring-boot-starter-aop</artifactId>
             <version>2.7.3</version> <!-- 显式指定版本 -->
         </dependency>
+
+        <dependency>
+            <groupId>com.qiniu</groupId>
+            <artifactId>qiniu-java-sdk</artifactId>
+            <!-- 不指定版本，继承父POM管理 -->
+        </dependency>
     </dependencies>
 
     <build>

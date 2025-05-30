@@ -129,6 +129,12 @@
                 <artifactId>spring-boot-starter-aop</artifactId>
                 <version>${parent.version}</version> <!-- 继承自spring-boot-starter-parent -->
             </dependency>
+
+            <dependency>
+                <groupId>com.qiniu</groupId>
+                <artifactId>qiniu-java-sdk</artifactId>
+                <version>[7.16.0, 7.16.99]</version>
+            </dependency>
         </dependencies>
 
     </dependencyManagement>

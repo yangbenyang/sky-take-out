@@ -6,3 +6,8 @@ sky:
     database: sky_take_out
     username: sky_take_out
     password: DSmnmwnnBYcWFYFA
+  qiniu:
+    accessKey: _dbHzRtlVf2YoH8lhSEJTBKGRCsXbDNaHUsCtS9_
+    secretKey: 85ch69eEkjJXBPeMc0-2kok4o7YM5iMRygSddq-P
+    bucket: java-learn-private
+    domain: sx0dc8f6h.hb-bkt.clouddn.com
